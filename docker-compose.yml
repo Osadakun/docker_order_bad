@@ -1,15 +1,5 @@
 version: "3"
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-    command: --default-authentication-plugin=mysql_native_password
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - /tmp/dockerdir:/etc/mysql/conf.d/
-    ports:
-      - 3306:3306
   api:
     build:
       context: ./backend/
@@ -25,6 +15,8 @@ services:
       - "3001:3000"
     depends_on:
       - db
+    links:
+      - db
   front:
     build:
       context: ./frontend/
@@ -34,5 +26,15 @@ services:
     command: sh -c "cd react-app && yarn start"
     ports:
       - "3000:3000"
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - /tmp/dockerdir:/etc/mysql/conf.d/
+    ports:
+      - 3306:3306
 volumes:
   mysql-data:
